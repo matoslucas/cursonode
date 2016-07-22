@@ -117,7 +117,7 @@ myapp.controller("chat", function($scope){
 		
 		}else{
 			var p = document.createElement("li");
-			p.innerHTML = data.msg;
+			p.innerHTML = "busqueda <a href=#/search/"+ data.msg+">"+data.msg+"</a>";
 			document.getElementById("chatMessages").appendChild(p);
 		}
 		
