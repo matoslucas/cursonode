@@ -89,9 +89,14 @@ myapp.controller("bodyCtrl", function ($scope, $http, $location) {
     myapp.$scope = $scope;
 
     $scope.search  =function(){
-        if($scope.searchInput.trim()!="")
+        if($scope.searchInput.trim()!=""){
+			 socket.emit('chat message', {msg:$scope.searchInput,id:socket.id});
             location.hash="#/search/"+$scope.searchInput;
-        else return;
+        }else{
+		
+		return;
+		
+		}
     };
 });
 
@@ -101,15 +106,22 @@ myapp.controller("chat", function($scope){
 
     $scope.send = function(){
 
-        socket.emit('chat message', $scope.message);
+        socket.emit('chat message', {msg:$scope.message,id:null} );
         $scope.message = "";
     }
 
-    socket.on('chat message', function(msg){
-        console.log("llego: ", msg);
-        var p = document.createElement("li");
-        p.innerHTML = msg;
-        document.getElementById("chatMessages").appendChild(p);
+    socket.on('chat message', function(data){
+        console.log("llego: ", data.msg);
+		 console.log("socket.id: ", socket.id);
+		if(data.id==socket.id){
+		
+		}else{
+			var p = document.createElement("li");
+			p.innerHTML = data.msg;
+			document.getElementById("chatMessages").appendChild(p);
+		}
+		
+       
     });
 
 
@@ -143,7 +155,11 @@ myapp.controller("home", function ($scope, $http) {
 
     if(location.hash.indexOf("#/search")==0){
         keyword = location.hash.split("/")[2]
-    }else keyword = null;
+		console.log("pepepep",keyword);
+    }else{
+		keyword = null;
+		console.log("vacio");
+	}
 
 
     myapp.searchMovies({keyword: keyword}, function(err, movies){
@@ -151,6 +167,7 @@ myapp.controller("home", function ($scope, $http) {
             alert("Error en el server");
         } else{
             $scope.movies = movies;
+			console.log(movies);
         }
     });
 
